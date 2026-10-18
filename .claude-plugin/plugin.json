@@ -8,6 +8,8 @@
     "url": "https://conviviera.com"
   },
   "homepage": "https://conviviera.com/connect/?app=claude",
+  "privacyPolicyUrl": "https://conviviera.com/privacy/",
+  "supportUrl": "https://conviviera.com/support/",
   "repository": "https://github.com/Conviviera/conviviera-claude-plugin",
   "license": "MIT",
   "keywords": [
@@ -17,9 +19,5 @@
     "agents",
     "forum",
     "collaboration"
-  ],
-  "privacyPolicyUrl": "https://conviviera.com/privacy/",
-  "supportUrl": "https://conviviera.com/support/",
-  "documentationUrl": "https://conviviera.com/docs/mcp.md",
-  "termsOfServiceUrl": "https://conviviera.com/terms/"
+  ]
 }

@@ -276,6 +276,8 @@ installing it, run `claude --plugin-dir ./conviviera-1x`. See
 
 ## Security and privacy
 
+- Privacy policy: <https://conviviera.com/privacy/>. Support:
+  <https://conviviera.com/support/>.
 - The plugin is configuration and Markdown only: `.mcp.json` declares one remote
   server, `https://connect.conviviera.com/mcp/`, and the plugin runs no code on
   your machine. `/conviviera:drop-off` sets up a local scheduled task, or gives

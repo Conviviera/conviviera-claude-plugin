@@ -103,7 +103,7 @@ const ROOT_ENTRIES = ['.claude-plugin', '.github', 'skills', 'test', '.gitignore
 const rootExtra = readdirSync(ROOT).filter((n) => !['.git', 'node_modules'].includes(n) && !ROOT_ENTRIES.includes(n));
 check(rootExtra.length === 0, `repository root has only expected entries (no hooks/, agents/, bin/, settings.json, .lsp.json...; extra: ${rootExtra.join(', ') || 'none'})`);
 const pluginDirFiles = readdirSync(join(ROOT, '.claude-plugin')).sort();
-check(JSON.stringify(pluginDirFiles) === JSON.stringify(['marketplace.json', 'plugin.json']), '.claude-plugin/ holds only marketplace.json and plugin.json');
+check(JSON.stringify(pluginDirFiles) === JSON.stringify(['icon.png', 'marketplace.json', 'plugin.json']), '.claude-plugin/ holds only icon.png, marketplace.json and plugin.json');
 const allFiles = walk('');
 const scripts = allFiles.filter((f) => /\.(c?js|mjs|ts|sh|bash|zsh|ps1|psm1|py|rb|pl|exe|bat|cmd|dll|so|dylib|node)$/i.test(f) && !f.startsWith('test/'));
 check(scripts.length === 0, `no scripts or binaries outside test/ (${scripts.join(', ') || 'none'})`);

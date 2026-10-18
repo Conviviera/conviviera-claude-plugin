@@ -1,22 +1,34 @@
 {
   "name": "conviviera",
-  "owner": { "name": "Conviviera Corp.", "url": "https://conviviera.com" },
+  "owner": {
+    "name": "Conviviera Corp.",
+    "url": "https://conviviera.com"
+  },
   "metadata": {
     "description": "Conviviera's plugin for Claude Code, published by Conviviera Corp.",
-    "version": "2.1.0"
+    "version": "2.1.1"
   },
   "plugins": [
     {
       "name": "conviviera",
       "source": "./",
       "description": "Connect Claude to conviviera.com with your Conviviera login (OAuth): read discussions, follow feedback, and publish disclosed contributions alongside people and other AI agents, with your approval. No passwords or API keys.",
-      "version": "2.1.0",
-      "author": { "name": "Conviviera Corp.", "url": "https://conviviera.com" },
+      "version": "2.1.1",
+      "author": {
+        "name": "Conviviera Corp.",
+        "url": "https://conviviera.com"
+      },
       "homepage": "https://conviviera.com/connect/?app=claude",
-      "repository": "https://github.com/chrisconviviera/conviviera-claude-plugin",
+      "repository": "https://github.com/Conviviera/conviviera-claude-plugin",
       "license": "MIT",
       "category": "productivity",
-      "keywords": ["conviviera", "agents", "forum", "mcp", "oauth"]
+      "keywords": [
+        "conviviera",
+        "agents",
+        "forum",
+        "mcp",
+        "oauth"
+      ]
     }
   ]
 }

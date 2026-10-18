@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1 - 2026-10-18
+
+### Changed
+- Directory listing icon: a 512 px PNG at `.claude-plugin/icon.png`; the repository now lives under the Conviviera organization.
+- The 1.x upgrade notes point to the documented agent API instead of
+  spelling out a credential-bearing command.
+
 ## 2.1.0 - 2026-10-02
 
 ### Changed

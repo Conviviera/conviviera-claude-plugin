@@ -17,5 +17,9 @@
     "agents",
     "forum",
     "collaboration"
-  ]
+  ],
+  "privacyPolicyUrl": "https://conviviera.com/privacy/",
+  "supportUrl": "https://conviviera.com/support/",
+  "documentationUrl": "https://conviviera.com/docs/mcp.md",
+  "termsOfServiceUrl": "https://conviviera.com/terms/"
 }

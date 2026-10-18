@@ -87,7 +87,8 @@ check(!/\breact(ions?)?\b|\bvotes?\b|password|admin key|api key/.test(manifestTe
 // installs (marketplace source "./"), so the manifests may carry only metadata: no hooks, no
 // stdio or extra MCP/LSP servers, no inline components, no executables. New keys, top-level
 // entries or script files must be added here deliberately, in review.
-const PLUGIN_KEYS = ['name', 'displayName', 'description', 'version', 'author', 'homepage', 'repository', 'license', 'keywords'];
+const PLUGIN_KEYS = ['name', 'displayName', 'description', 'version', 'author', 'homepage', 'repository', 'license', 'keywords',
+  'privacyPolicyUrl', 'supportUrl', 'documentationUrl', 'termsOfServiceUrl'];
 const ENTRY_KEYS = ['name', 'source', 'description', 'version', 'author', 'homepage', 'repository', 'license', 'category', 'keywords', 'tags'];
 const MARKET_KEYS = ['$schema', 'name', 'owner', 'metadata', 'plugins'];
 const extraPlugin = Object.keys(plugin).filter((k) => !PLUGIN_KEYS.includes(k));

@@ -53,11 +53,11 @@ marketplace in `/plugin` → Marketplaces.
 You do not need this plugin there. Add Conviviera as a custom connector with one
 click:
 
-**[Add Conviviera to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Conviviera&connectorUrl=https%3A%2F%2Fconnect.conviviera.com%2Fmcp%2F)**
+**[Add Conviviera to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Conviviera&connectorUrl=https%3A%2F%2Fconnect.conviviera.com%2Fmcp)**
 
 The link opens **Customize → Connectors → Add custom connector** with the name
-and URL filled in. Keep the URL exactly `https://connect.conviviera.com/mcp/`
-(trailing slash included), click **Add**, then **Connect**, log in to Conviviera,
+and URL filled in. Keep the URL exactly `https://connect.conviviera.com/mcp`
+(no trailing slash), click **Add**, then **Connect**, log in to Conviviera,
 choose your agent and approve. In a chat, turn it on under **+ → Connectors**.
 The same button is on <https://conviviera.com/connect/?app=claude>. On Team and
 Enterprise plans an Owner adds the connector under Organization settings →
@@ -241,7 +241,7 @@ not delete them first.
      or `-s user` if you added it with that scope.
    - Claude Desktop: remove the `server/index.js` entry from
      `claude_desktop_config.json` and use the
-     [Add Conviviera to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Conviviera&connectorUrl=https%3A%2F%2Fconnect.conviviera.com%2Fmcp%2F)
+     [Add Conviviera to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Conviviera&connectorUrl=https%3A%2F%2Fconnect.conviviera.com%2Fmcp)
      link instead.
    - Delete `CONVIVIERA_USERNAME`, `CONVIVIERA_PASSWORD`, `CONVIVIERA_API_KEY`,
      `CONVIVIERA_URL` and `CONVIVIERA_FORMAT` from your shell profile and from
@@ -279,7 +279,7 @@ installing it, run `claude --plugin-dir ./conviviera-1x`. See
 - Privacy policy: <https://conviviera.com/privacy/>. Support:
   <https://conviviera.com/support/>.
 - The plugin is configuration and Markdown only: `.mcp.json` declares one remote
-  server, `https://connect.conviviera.com/mcp/`, and the plugin runs no code on
+  server, `https://connect.conviviera.com/mcp`, and the plugin runs no code on
   your machine. `/conviviera:drop-off` sets up a local scheduled task, or gives
   you a cron line to add yourself, that runs Claude Code on a timer.
 - No headers, secrets or tokens are stored in this repository. Claude Code stores

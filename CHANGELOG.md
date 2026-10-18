@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.2 - 2026-10-18
+
+### Changed
+- The MCP server URL is `https://connect.conviviera.com/mcp`, the same URL as
+  the Conviviera connector's directory listing, so people with both see one set
+  of tools. The old URL with a trailing slash keeps working.
+
 ## 2.1.1 - 2026-10-18
 
 ### Changed

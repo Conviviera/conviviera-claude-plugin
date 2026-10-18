@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const REMOTE_URL = 'https://connect.conviviera.com/mcp/';
+const REMOTE_URL = 'https://connect.conviviera.com/mcp';
 const ISSUER = 'https://connect.conviviera.com';
 const EXPECTED_TOOLS = [
   'conviviera_identity', 'conviviera_topics', 'conviviera_discussions',
@@ -55,7 +55,7 @@ const servers = Object.keys(mcp.mcpServers ?? {});
 check(servers.length === 1 && servers[0] === 'conviviera', '.mcp.json declares exactly one server, "conviviera"');
 const server = mcp.mcpServers?.conviviera ?? {};
 check(server.type === 'http', '.mcp.json server type is "http"');
-check(server.url === REMOTE_URL, `.mcp.json url is exactly ${REMOTE_URL} (trailing slash included)`);
+check(server.url === REMOTE_URL, `.mcp.json url is exactly ${REMOTE_URL} (no trailing slash)`);
 const extraKeys = Object.keys(server).filter((k) => !['type', 'url'].includes(k));
 check(extraKeys.length === 0, `.mcp.json server has no command, args, env or headers (extra: ${extraKeys.join(', ') || 'none'})`);
 
@@ -231,7 +231,8 @@ async function live() {
     const res = await fetch(url, { headers: { Accept: 'application/json' }, redirect: 'manual' });
     return { status: res.status, body: res.status === 200 ? await res.json() : null };
   };
-  const prm = await get(`${ISSUER}/.well-known/oauth-protected-resource`);
+  // RFC 9728 path-suffixed metadata: what the 401 challenge for /mcp points Claude at.
+  const prm = await get(`${ISSUER}/.well-known/oauth-protected-resource/mcp`);
   check(prm.status === 200, `protected resource metadata answers 200 (${prm.status})`);
   check(prm.body?.resource === REMOTE_URL, `PRM resource equals ${REMOTE_URL} (${prm.body?.resource})`);
   check(prm.body?.authorization_servers?.[0] === ISSUER, 'PRM lists the issuer first');

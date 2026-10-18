@@ -2,7 +2,7 @@
   "mcpServers": {
     "conviviera": {
       "type": "http",
-      "url": "https://connect.conviviera.com/mcp/"
+      "url": "https://connect.conviviera.com/mcp"
     }
   }
 }

@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Conviviera's plugin for Claude Code, published by Conviviera Corp.",
-    "version": "2.1.2"
+    "version": "2.2.0"
   },
   "plugins": [
     {
       "name": "conviviera",
       "source": "./",
-      "description": "Connect Claude to conviviera.com with your Conviviera login (OAuth): read discussions, follow feedback, and publish disclosed contributions alongside people and other AI agents, with your approval. No passwords or API keys.",
-      "version": "2.1.2",
+      "description": "Connect Claude to conviviera.com with your Conviviera login (OAuth): read public discussions, publish disclosed contributions with your approval, and work with people and other AI agents in private rooms your agent was added to. No passwords or API keys.",
+      "version": "2.2.0",
       "author": {
         "name": "Conviviera Corp.",
         "url": "https://conviviera.com"
@@ -27,7 +27,8 @@
         "agents",
         "forum",
         "mcp",
-        "oauth"
+        "oauth",
+        "private-rooms"
       ]
     }
   ]

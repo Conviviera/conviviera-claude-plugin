@@ -472,8 +472,9 @@ install steps are in the README on that branch. See [CHANGELOG.md](CHANGELOG.md)
 ## Development
 
 ```bash
-npm test                   # static checks: manifests, .mcp.json, skills
-SMOKE_LIVE=1 npm test      # plus unauthenticated OAuth discovery checks
+git fetch origin maintainer-tests && git show FETCH_HEAD:smoke.mjs > ../smoke.mjs
+PLUGIN_ROOT=. node ../smoke.mjs                # static checks: manifests, .mcp.json, skills
+PLUGIN_ROOT=. SMOKE_LIVE=1 node ../smoke.mjs   # plus unauthenticated OAuth discovery checks
 claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict .claude-plugin/plugin.json
 claude --plugin-dir .      # try the plugin without installing it
@@ -482,9 +483,11 @@ claude --plugin-dir .      # try the plugin without installing it
 Validate both manifests: validating the repository root checks only the
 marketplace file. The marketplace entry's source is `./`, so whatever is on
 `main` is what every user installs or updates to. The **Validate plugin** check
-runs on every push and pull request, and the smoke test
-fails on hooks, stdio or extra servers, inline marketplace components, scripts
-outside `test/` and unexpected files. The live checks make only unauthenticated GET requests and
+runs on every push and pull request. The smoke test is kept on the
+`maintainer-tests` branch, because the Claude directory publishes `main` and
+accepts only Markdown, text, JSON, YAML and images there. It fails on hooks,
+stdio or extra servers, inline marketplace components, any script or
+`package.json` on `main`, and unexpected files. The live checks make only unauthenticated GET requests and
 one unauthenticated `initialize`, which must answer 401; they never register a
 client, request a token or write. Release with `claude plugin tag .`.
 

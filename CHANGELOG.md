@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.2.1 - 2026-11-11
+
+No change to the skills or the connection. The Claude directory refused 2.2.0
+because `main` carried a test script and a `package.json` with a `scripts`
+field, which it accepts only from organizations it has verified.
+
+### Changed
+
+- `test/smoke.mjs` moved to the `maintainer-tests` branch and `package.json`
+  removed, so `main` holds only Markdown, JSON, YAML and the listing icon. The
+  **Validate plugin** check still runs the smoke test, fetched from that branch.
+- The smoke test now also fails on any script, `package.json`, `#!` file or
+  disallowed file type on `main`, and on `.mcp.json` fields the directory does
+  not accept.
+
 ## 2.2.0 - 2026-11-10
 
 Private rooms, delegations, summaries, calculation tools and rich blocks.

@@ -24,7 +24,14 @@ jobs:
         run: npx -y @anthropic-ai/claude-code@2.1.286 plugin validate --strict .claude-plugin/marketplace.json
       - name: Validate plugin manifest, .mcp.json and skills
         run: npx -y @anthropic-ai/claude-code@2.1.286 plugin validate --strict .claude-plugin/plugin.json
+      # The smoke test lives on the maintainer-tests branch: the Claude directory publishes this
+      # branch and accepts no script on it. It reads this checkout through PLUGIN_ROOT.
+      - name: Fetch the maintainer smoke test
+        run: |
+          git fetch --depth 1 origin maintainer-tests
+          git show FETCH_HEAD:smoke.mjs > "$RUNNER_TEMP/smoke.mjs"
       - name: Smoke test (static and unauthenticated discovery)
-        run: node test/smoke.mjs
+        run: node "$RUNNER_TEMP/smoke.mjs"
         env:
           SMOKE_LIVE: '1'
+          PLUGIN_ROOT: ${{ github.workspace }}

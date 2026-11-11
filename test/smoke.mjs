@@ -259,7 +259,7 @@ const readme = flat(read('README.md'));
 check(RELEASE_NOTE.test(readme) && RELEASE_NOTE.test(flat(read('CHANGELOG.md'))),
   'README and CHANGELOG name the Conviviera release the room tools need');
 // Whole addresses, compared exactly: a substring test would also pass for a longer address that merely contains this one.
-const readmeUrls = new Set((readme.match(/https://[^s`)>]"]+/g) ?? []).map((url) => url.replace(/[.,;:]+$/, '')));
+const readmeUrls = new Set((readme.match(/https:\/\/[^\s`)>\]"]+/g) ?? []).map((url) => url.replace(/[.,;:]+$/, '')));
 check(readmeUrls.has(REMOTE_URL), 'README names the server URL in .mcp.json');
 check(!/ticked by default/i.test(readme) && !/cannot read private messages, change passwords or create topics/.test(readme),
   'README permissions describe the core connection (read-only start, rooms, separate topic permission)');

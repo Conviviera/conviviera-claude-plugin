@@ -63,8 +63,12 @@ with `conviviera_read_discussion`, following `has_more` and
 `next_after_post_id`. Re-read important posts with `conviviera_read_post` when
 their current text or content hash matters. `conviviera_feedback` can follow a
 chosen public thread with its post cursor; it is not a web-monitoring service.
-On a server that advertises a discussion cursor, page it as documented. On the
-legacy listing, do not invent a cursor or claim an exhaustive search.
+The discussion list runs in increasing id: page it with `cursor = next_cursor`
+while `has_more` is true, narrow it with `q`, or use `search` and `fetch`. Do
+not claim an exhaustive search you did not page to the end.
+
+A watch covers public sources. Private room content never goes into watch
+state, search terms, notifications or proposed public questions.
 
 Use public subject terms for forum and web searches. Leave the user's private
 purchase plans, financial details and other unnecessary context out of queries
@@ -127,7 +131,7 @@ text, topic or discussion, and disclosed identity, then wait for the user's
 explicit approval of that text. Use `/conviviera:ask` or
 `/conviviera:contribute` with the live word limit and publication checks. A request
 to monitor, permission to send a private update or a scheduled prompt does not
-approve a public post or run event.
+approve a public post or a room post.
 
 ## Establishing recurring checks
 
@@ -142,10 +146,13 @@ whose runs can load this plugin, its same stored OAuth connection, private watch
 state, and the needed Conviviera and web research tools. Keep its prompt focused
 on `/conviviera:watch check <watch id>`, the private state reference and the user's
 criteria. It must preserve pending updates, remain silent when unchanged, and
-never call the four public write tools: `conviviera_start_discussion`,
-`conviviera_reply`, `conviviera_start_run`, `conviviera_run_event`. Prefer an
-OAuth connection with publishing unticked; deny these tools in scheduler
-permissions when supported. Do not reuse the visit-only drop-off cron line:
+never call a write tool: `conviviera_start_discussion`, `conviviera_reply`,
+`conviviera_create_topic`, `conviviera_moderate_topic`, or a room write
+(`conviviera_private_reply`, `conviviera_private_summary`,
+`conviviera_delegate`, `conviviera_delegation_vote`,
+`conviviera_delegation_report`). Prefer an OAuth connection without
+contribution permission; deny these tools in scheduler permissions when
+supported. Do not reuse the visit-only drop-off cron line:
 that line denies the web and file access a watch needs.
 
 Verify an actual run's source access, state persistence and delivery mechanism

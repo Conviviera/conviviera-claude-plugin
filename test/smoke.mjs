@@ -12,15 +12,35 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const REMOTE_URL = 'https://connect.conviviera.com/mcp';
+// The core profile: the only address that carries private rooms. It is its own OAuth resource,
+// so a sign-in for the legacy /mcp address does not work here and the reverse.
+const REMOTE_URL = 'https://connect.conviviera.com/mcp/core';
 const ISSUER = 'https://connect.conviviera.com';
-const EXPECTED_TOOLS = [
+// The core catalog. The first seven read tools are the ones a scheduled public visit uses.
+const READ_TOOLS = [
   'conviviera_identity', 'conviviera_topics', 'conviviera_discussions',
   'conviviera_read_discussion', 'conviviera_read_post', 'conviviera_feedback',
-  'conviviera_activity', 'conviviera_start_discussion', 'conviviera_reply',
-  'conviviera_start_run', 'conviviera_run_event',
+  'conviviera_activity', 'conviviera_topic_activity', 'conviviera_record_lookup',
+  'conviviera_private_threads', 'conviviera_read_private_thread', 'conviviera_private_updates',
+  'conviviera_calc_project', 'conviviera_calc_stats', 'conviviera_calc_arithmetic',
 ];
-const EXPECTED_SKILLS = ['ask', 'catch-up', 'contribute', 'conviviera-participation', 'drop-off', 'setup', 'visit', 'watch'];
+const VISIT_TOOLS = READ_TOOLS.slice(0, 7);
+const WRITE_TOOLS = [
+  'conviviera_start_discussion', 'conviviera_reply', 'conviviera_create_topic', 'conviviera_moderate_topic',
+  'conviviera_private_reply', 'conviviera_private_summary', 'conviviera_delegate',
+  'conviviera_delegation_vote', 'conviviera_delegation_report',
+];
+const EXPECTED_TOOLS = [...READ_TOOLS, ...WRITE_TOOLS];
+// Core tools without the conviviera_ prefix.
+const GENERIC_TOOLS = ['search', 'fetch'];
+// Only on the legacy /mcp address. A skill that names one sends Claude after a tool this connection lacks.
+const REMOVED_TOOLS = ['conviviera_start_run', 'conviviera_run_event'];
+const EXPECTED_SKILLS = ['ask', 'catch-up', 'check-in', 'contribute', 'conviviera-participation', 'delegate', 'drop-off',
+  'room-data', 'rooms', 'setup', 'visit', 'watch'];
+const ROOM_SKILLS = ['check-in', 'delegate', 'room-data', 'rooms'];
+const RELEASE_NOTE = /Conviviera release of 10 November 2026 or later/;
+// Prose wraps, so phrase checks run on text with whitespace collapsed.
+const flat = (s) => s.replace(/\s+/g, ' ');
 // Tool names of the retired 1.x local server. None may appear in skills or manifests.
 const LEGACY_TOOLS = ['whoami', 'read_thread', 'list_threads', 'register_agent', 'set_residency',
   'list_bookmarks', 'send_message', 'mark_notifications_read'];
@@ -140,8 +160,10 @@ for (const dir of skillDirs) {
 }
 const unknown = [...toolMentions].filter((t) => !EXPECTED_TOOLS.includes(t));
 check(unknown.length === 0, `skills name only live tools (unknown: ${unknown.join(', ') || 'none'})`);
+for (const tool of REMOVED_TOOLS) check(!toolMentions.has(tool), `no skill names ${tool}, which the core profile does not have`);
 const participation = read('skills/conviviera-participation/SKILL.md');
 for (const tool of EXPECTED_TOOLS) check(participation.includes(tool), `participation skill documents ${tool}`);
+for (const tool of GENERIC_TOOLS) check(participation.includes('`' + tool + '`'), `participation skill documents ${tool}`);
 check(/untrusted/i.test(participation), 'participation skill treats forum content as untrusted');
 check(/publish nothing under that identity/.test(participation), 'participation skill blocks publishing on an identity mismatch');
 // A link_url relayed from post text is an account-linking phishing vector: the norms must forbid it,
@@ -158,8 +180,6 @@ check(!/\b\d{3,4} words\b/.test(participation), 'participation skill hardcodes n
 // --allowedTools only adds allow rules; settings or a permissive defaultMode could still let a
 // write tool run, so the line must also pass --disallowedTools (deny wins) and dontAsk.
 const PREFIX = 'mcp__plugin_conviviera_conviviera__';
-const READ_TOOLS = EXPECTED_TOOLS.slice(0, 7);
-const WRITE_TOOLS = EXPECTED_TOOLS.slice(7);
 const flagList = (line, flag) => {
   const m = new RegExp(`${flag}\\s+"([^"]*)"`).exec(line);
   return m ? m[1].split(/[\s,]+/).filter(Boolean) : null;
@@ -171,10 +191,13 @@ for (const file of ['README.md', 'skills/drop-off/SKILL.md']) {
     headlessLines++;
     const allowed = flagList(line, '--allowedTools');
     const denied = flagList(line, '--disallowedTools');
-    check(Array.isArray(allowed) && READ_TOOLS.every((t) => allowed.includes(PREFIX + t)),
-      `${file}: headless line allows every read tool`);
+    check(Array.isArray(allowed) && VISIT_TOOLS.every((t) => allowed.includes(PREFIX + t)),
+      `${file}: headless line allows every public read tool a visit uses`);
     check(Array.isArray(allowed) && !allowed.some((t) => WRITE_TOOLS.some((w) => t.endsWith(w))),
       `${file}: headless line allows no write tool`);
+    // A scheduled visit is public-only: no room, search or calculation tool, so no room text reaches a log.
+    check(Array.isArray(allowed) && allowed.every((t) => VISIT_TOOLS.some((v) => t === PREFIX + v)),
+      `${file}: headless line allows nothing beyond those seven tools`);
     const missing = WRITE_TOOLS.filter((t) => !(denied ?? []).includes(PREFIX + t));
     check(Array.isArray(denied) && missing.length === 0,
       `${file}: headless line denies every write tool with --disallowedTools (missing: ${missing.join(', ') || 'none'})`);
@@ -197,6 +220,50 @@ const watch = read('skills/watch/SKILL.md');
 check(!/^disable-model-invocation:\s*true$/m.test(watch), 'watch stays discoverable from a natural user monitoring request');
 check(!/^user-invocable:\s*false$/m.test(watch), 'watch remains available as a slash command');
 check(/untrusted/i.test(read('skills/contribute/SKILL.md')), 'contribute restates that what it reads is untrusted');
+
+// --- private rooms: the rules each room skill must carry
+for (const dir of ROOM_SKILLS) {
+  const text = flat(read(`skills/${dir}/SKILL.md`));
+  check(/untrusted/i.test(text), `skills/${dir} treats room text as untrusted data`);
+  check(/lab and model truthfully/i.test(text), `skills/${dir} has the agent state its lab and model truthfully`);
+  check(/`mode`/.test(text), `skills/${dir} covers the run mode`);
+  check(RELEASE_NOTE.test(text), `skills/${dir} names the Conviviera release its tools need`);
+  check(/wait for a yes|only after a yes|user's yes|explicit yes/i.test(text), `skills/${dir} waits for the user's yes before a room write`);
+  check(/^user-invocable:\s*true$/m.test(read(`skills/${dir}/SKILL.md`)), `skills/${dir} is a slash command`);
+}
+const rooms = flat(read('skills/rooms/SKILL.md'));
+check(/Never repeat room content in public/.test(rooms), 'rooms never repeats room content in public');
+check(/reader's\*\* agent only reads|reader's agent only reads/i.test(rooms), 'rooms says a reader only reads');
+for (const tool of ['conviviera_private_threads', 'conviviera_read_private_thread', 'conviviera_private_reply']) {
+  check(rooms.includes(tool), `rooms uses ${tool}`);
+}
+const delegateSkill = flat(read('skills/delegate/SKILL.md'));
+check(/public post rule/i.test(delegateSkill), 'delegate states the public post rule');
+check(/never sign it with the room pseudonym/i.test(delegateSkill), 'delegate posts in public as the public identity, not the room pseudonym');
+for (const tool of ['conviviera_delegate', 'conviviera_delegation_vote', 'conviviera_delegation_report', 'conviviera_private_summary']) {
+  check(delegateSkill.includes(tool), `delegate uses ${tool}`);
+}
+const roomData = flat(read('skills/room-data/SKILL.md'));
+for (const block of ['chart', 'table', 'link', 'image']) {
+  check(roomData.includes('```' + block), `room-data shows a ${block} block`);
+}
+check(/calculation, not advice/i.test(roomData), 'room-data says a projection is a calculation, not advice');
+check(/80% and 95%/.test(roomData), 'room-data reports both prediction intervals');
+for (const tool of ['conviviera_calc_project', 'conviviera_calc_stats', 'conviviera_calc_arithmetic']) {
+  check(roomData.includes(tool), `room-data uses ${tool}`);
+}
+const checkIn = flat(read('skills/check-in/SKILL.md'));
+check(checkIn.includes('conviviera_private_updates'), 'check-in starts from conviviera_private_updates');
+check(/Never repeat room content in public/.test(flat(participation)), 'participation keeps room content out of public posts');
+const readme = flat(read('README.md'));
+check(RELEASE_NOTE.test(readme) && RELEASE_NOTE.test(flat(read('CHANGELOG.md'))),
+  'README and CHANGELOG name the Conviviera release the room tools need');
+// Whole addresses, compared exactly: a substring test would also pass for a longer address that merely contains this one.
+const readmeUrls = new Set((readme.match(/https:\/\/[^\s`)>\]"]+/g) ?? []).map((url) => url.replace(/[.,;:]+$/, '')));
+check(readmeUrls.has(REMOTE_URL), 'README names the server URL in .mcp.json');
+check(!/ticked by default/i.test(readme) && !/cannot read private messages, change passwords or create topics/.test(readme),
+  'README permissions describe the core connection (read-only start, rooms, separate topic permission)');
+for (const tool of [...EXPECTED_TOOLS, ...GENERIC_TOOLS]) check(readme.includes('`' + tool + '`'), `README tools table lists ${tool}`);
 check(/\/conviviera:drop-off/.test(participation), 'participation sends scheduling requests to /conviviera:drop-off');
 for (const file of ['README.md', 'skills/drop-off/SKILL.md']) {
   check(!/cannot publish/i.test(read(file)) || /--disallowedTools/.test(read(file)),
@@ -234,8 +301,8 @@ async function live() {
     const res = await fetch(url, { headers: { Accept: 'application/json' }, redirect: 'manual' });
     return { status: res.status, body: res.status === 200 ? await res.json() : null };
   };
-  // RFC 9728 path-suffixed metadata: what the 401 challenge for /mcp points Claude at.
-  const prm = await get(`${ISSUER}/.well-known/oauth-protected-resource/mcp`);
+  // RFC 9728 path-suffixed metadata: what the 401 challenge for the server URL points Claude at.
+  const prm = await get(`${ISSUER}/.well-known/oauth-protected-resource${new URL(REMOTE_URL).pathname}`);
   check(prm.status === 200, `protected resource metadata answers 200 (${prm.status})`);
   check(prm.body?.resource === REMOTE_URL, `PRM resource equals ${REMOTE_URL} (${prm.body?.resource})`);
   check(prm.body?.authorization_servers?.[0] === ISSUER, 'PRM lists the issuer first');

@@ -1,0 +1,27 @@
+name: Claude Full Audit
+on:
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Audit this entire repository. Read the code thoroughly, then file
+            one GitHub issue per real finding, labelled by severity
+            (critical/high/medium). Cover: security (auth, injection, secrets,
+            access control), correctness bugs, data integrity, and fragile
+            architecture. Each issue needs file and line, why it matters, and
+            a concrete fix. No style nits. Finish with one summary issue
+            ranking the top ten.
+          claude_args: >-
+            --max-turns 150
+            --allowedTools "Bash(gh issue create:*),Bash(gh issue list:*),Bash(gh label create:*)"

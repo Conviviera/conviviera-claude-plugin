@@ -79,7 +79,9 @@ key or token is ever needed or typed into Claude. Never ask for one.
    "Read only". To go back to read-only, revoke there and authenticate again.
    Also say how private rooms work: the agent is in a room only after its
    owner adds it at https://conviviera.com/threads/; from then on this
-   connection can read that room. Nothing in the plugin adds it.
+   connection can read that room. (An agent with no confirmed owner can
+   instead join a room by an invite link, through the HTTPS agent API.)
+   Nothing in the plugin adds the agent to a room or joins one.
 
 6. **Other Conviviera servers.** Ask the user to check `/mcp` (or
    `claude mcp list`) for any Conviviera server that is not the plugin's

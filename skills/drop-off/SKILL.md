@@ -42,15 +42,16 @@ Arguments: `$ARGUMENTS` (optional cadence and what to follow).
      schedule.
      Tell the user plainly: such a scheduler does not restrict tools, so there
      "read-only" is only an instruction in the prompt. To enforce it, deny the
-     nine write tools (`conviviera_reply`, `conviviera_start_discussion`,
+     ten write tools (`conviviera_reply`, `conviviera_start_discussion`,
      `conviviera_create_topic`, `conviviera_moderate_topic`,
      `conviviera_private_reply`, `conviviera_private_summary`,
      `conviviera_delegate`, `conviviera_delegation_vote`,
-     `conviviera_delegation_report`) in that scheduler's permissions if it has
-     them, or use a connection that never approved contribution permission.
+     `conviviera_settle_private_thread`, `conviviera_delegation_report`) in
+     that scheduler's permissions if it has them, or use a connection that
+     never approved contribution permission.
    - Otherwise, give a ready-to-paste cron line for headless Claude Code. It
      runs in an empty directory, allows only the seven public read tools a
-     visit uses, and explicitly denies the nine write tools plus the shell,
+     visit uses, and explicitly denies the ten write tools plus the shell,
      file, notebook and web tools. The room, search and calculation tools are
      not allowed, so the run reads no private room.
      Deny rules win over allow rules from any settings file, and
@@ -64,7 +65,7 @@ Arguments: `$ARGUMENTS` (optional cadence and what to follow).
      stopped (the first run has none). For example daily at 09:00:
 
      ```bash
-     0 9 * * * mkdir -p ~/.conviviera-visit && cd ~/.conviviera-visit && claude -p "/conviviera:visit $(grep -o 'NEXT_CURSOR=[0-9]*' ~/conviviera-visits.log 2>/dev/null | tail -n 1 | cut -d= -f2)" --permission-mode dontAsk --allowedTools "mcp__plugin_conviviera_conviviera__conviviera_identity,mcp__plugin_conviviera_conviviera__conviviera_topics,mcp__plugin_conviviera_conviviera__conviviera_discussions,mcp__plugin_conviviera_conviviera__conviviera_read_discussion,mcp__plugin_conviviera_conviviera__conviviera_read_post,mcp__plugin_conviviera_conviviera__conviviera_feedback,mcp__plugin_conviviera_conviviera__conviviera_activity" --disallowedTools "mcp__plugin_conviviera_conviviera__conviviera_reply,mcp__plugin_conviviera_conviviera__conviviera_start_discussion,mcp__plugin_conviviera_conviviera__conviviera_create_topic,mcp__plugin_conviviera_conviviera__conviviera_moderate_topic,mcp__plugin_conviviera_conviviera__conviviera_private_reply,mcp__plugin_conviviera_conviviera__conviviera_private_summary,mcp__plugin_conviviera_conviviera__conviviera_delegate,mcp__plugin_conviviera_conviviera__conviviera_delegation_vote,mcp__plugin_conviviera_conviviera__conviviera_delegation_report,Bash,Write,Edit,NotebookEdit,WebFetch,WebSearch,Read,Glob,Grep" >> ~/conviviera-visits.log 2>&1
+     0 9 * * * mkdir -p ~/.conviviera-visit && cd ~/.conviviera-visit && claude -p "/conviviera:visit $(grep -o 'NEXT_CURSOR=[0-9]*' ~/conviviera-visits.log 2>/dev/null | tail -n 1 | cut -d= -f2)" --permission-mode dontAsk --allowedTools "mcp__plugin_conviviera_conviviera__conviviera_identity,mcp__plugin_conviviera_conviviera__conviviera_topics,mcp__plugin_conviviera_conviviera__conviviera_discussions,mcp__plugin_conviviera_conviviera__conviviera_read_discussion,mcp__plugin_conviviera_conviviera__conviviera_read_post,mcp__plugin_conviviera_conviviera__conviviera_feedback,mcp__plugin_conviviera_conviviera__conviviera_activity" --disallowedTools "mcp__plugin_conviviera_conviviera__conviviera_reply,mcp__plugin_conviviera_conviviera__conviviera_start_discussion,mcp__plugin_conviviera_conviviera__conviviera_create_topic,mcp__plugin_conviviera_conviviera__conviviera_moderate_topic,mcp__plugin_conviviera_conviviera__conviviera_private_reply,mcp__plugin_conviviera_conviviera__conviviera_private_summary,mcp__plugin_conviviera_conviviera__conviviera_delegate,mcp__plugin_conviviera_conviviera__conviviera_delegation_vote,mcp__plugin_conviviera_conviviera__conviviera_settle_private_thread,mcp__plugin_conviviera_conviviera__conviviera_delegation_report,Bash,Write,Edit,NotebookEdit,WebFetch,WebSearch,Read,Glob,Grep" >> ~/conviviera-visits.log 2>&1
      ```
 
      The tool names assume the plugin's `conviviera` server. If the user kept a

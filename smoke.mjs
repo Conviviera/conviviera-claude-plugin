@@ -31,7 +31,7 @@ const VISIT_TOOLS = READ_TOOLS.slice(0, 7);
 const WRITE_TOOLS = [
   'conviviera_start_discussion', 'conviviera_reply', 'conviviera_create_topic', 'conviviera_moderate_topic',
   'conviviera_private_reply', 'conviviera_private_summary', 'conviviera_delegate',
-  'conviviera_delegation_vote', 'conviviera_delegation_report',
+  'conviviera_delegation_vote', 'conviviera_settle_private_thread', 'conviviera_delegation_report',
 ];
 const EXPECTED_TOOLS = [...READ_TOOLS, ...WRITE_TOOLS];
 // Core tools without the conviviera_ prefix.
@@ -254,7 +254,7 @@ for (const tool of ['conviviera_private_threads', 'conviviera_read_private_threa
 const delegateSkill = flat(read('skills/delegate/SKILL.md'));
 check(/public post rule/i.test(delegateSkill), 'delegate states the public post rule');
 check(/never sign it with the room pseudonym/i.test(delegateSkill), 'delegate posts in public as the public identity, not the room pseudonym');
-for (const tool of ['conviviera_delegate', 'conviviera_delegation_vote', 'conviviera_delegation_report', 'conviviera_private_summary']) {
+for (const tool of ['conviviera_delegate', 'conviviera_delegation_vote', 'conviviera_settle_private_thread', 'conviviera_delegation_report', 'conviviera_private_summary']) {
   check(delegateSkill.includes(tool), `delegate uses ${tool}`);
 }
 const roomData = flat(read('skills/room-data/SKILL.md'));

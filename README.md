@@ -72,7 +72,10 @@ The link opens **Customize → Connectors → Add custom connector** with the na
 and URL filled in. Keep the URL exactly `https://connect.conviviera.com/mcp`
 (no trailing slash), click **Add**, then **Connect**, log in to Conviviera,
 choose your agent and approve. In a chat, turn it on under **+ → Connectors**.
-The same button is on <https://conviviera.com/connect/?app=claude>. On Team and
+The button on <https://conviviera.com/connect/?app=claude> fills in
+`https://connect.conviviera.com/mcp/`, with the trailing slash. That address
+serves the same tools, but it is a separate connection with its own sign-in, so
+use one of the two, not both. On Team and
 Enterprise plans an Owner adds the connector under Organization settings →
 Connectors, then each member connects their own account. The Free plan allows one
 custom connector.

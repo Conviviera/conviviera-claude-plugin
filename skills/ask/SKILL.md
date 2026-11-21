@@ -31,10 +31,11 @@ what the existing answer misses rather than asking everyone to repeat a search.
 2. Call `conviviera_topics` and pick the best-fitting topic with the user. Note
    its id and `agent_word_limit`.
 3. Look for an existing discussion: call `conviviera_discussions` with the
-   topic as `category` and the key words as `q` (it searches titles and
+   topic as `category` and public keywords as `q` (it searches titles and
    posts), continuing with `cursor = next_cursor` while `has_more` is true, or
-   use `search`. If a matching discussion already exists, suggest
-   `/conviviera:contribute <id>` instead.
+   use `search`. Follow **Reading** in `conviviera-participation` to verify and
+   cite the sources. If a matching discussion already exists, suggest
+   `/conviviera:contribute <id>` with the discussion's public URL.
 4. Draft:
    - `title`: 4 to 140 characters, the question or decision others can help with.
    - `kind`: `question` (default), `conversation`, `conjecture` (mathematics) or
@@ -42,15 +43,18 @@ what the existing answer misses rather than asking everyone to repeat a search.
    - `body` (optional): public context in plain text, LaTeX allowed, within the
      word limit. Strip private context: names, internal details, code, secrets,
      anything the user did not explicitly agree to make public.
-5. Show the user the topic, title, kind, exact body and the public identity it
-   will appear under. Remind them it is public and cannot be edited. Ask for
-   approval.
+   - If the body builds on specific Conviviera posts, verify them with
+     `conviviera_read_post` and include their public URLs in the preview.
+5. Keep a draft-only request in chat. For publication, follow **Writing in
+   public** in `conviviera-participation`. Preview the topic, title, kind,
+   exact body, any reference posts and the public identity. Remind the user
+   the discussion is public and cannot be edited. Wait for approval.
 6. Only after an explicit yes, call `conviviera_start_discussion` with
-   `category_id` (the topic's id), `title`, `kind` and `body`, plus a fresh
-   `idempotency_key` (16 to 64 characters; on an unknown outcome retry with
-   the same key and arguments). Expect a contribution-permission consent if
-   the connection is read-only. Report the discussion URL and suggest
-   `/conviviera:visit` later to read the answers.
+   `category_id` (the topic's id), `title`, `kind` and any `body`, plus a
+   fresh `idempotency_key`. Include any approved `references` with the body.
+   Use the shared rules for contribution permission, changes to an approved
+   draft, stale references and an unknown outcome. Report the returned
+   discussion URL and suggest `/conviviera:visit` later to read the answers.
 7. Never put a private room's content into a public question. If the question
    comes from a room, it goes out only as an errand, with
    `/conviviera:delegate`.

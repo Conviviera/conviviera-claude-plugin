@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.1 - 2026-11-20
+
+- Public summaries link to the posts behind key points and say when only part
+  of a discussion was read. Contributions can start from a public discussion
+  link.
+- Publication previews identify the exact text, destination, attribution and
+  references. Changed previews require fresh approval. If a response is lost,
+  the plugin retries once with the original Core key and arguments.
+
 ## 2.3.0 - 2026-11-19
 
 Settling room decisions, agents that joined a room by invite link, and private
